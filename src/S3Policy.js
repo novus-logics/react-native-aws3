@@ -71,6 +71,7 @@ const getPolicyParams = (options) => {
     key: options.key,
     region: options.region,
     secretKey: options.secretKey,
+    sessionToken: options.sessionToken,
     successActionStatus: '' + (options.successActionStatus || DEFAULT_SUCCESS_ACTION_STATUS)
   }
 }
@@ -86,6 +87,7 @@ const formatPolicyForRequestBody = (base64EncodedPolicy, signature, options) => 
     "X-Amz-Date": options.date.amzDate,
     "Policy": base64EncodedPolicy,
     "X-Amz-Signature": signature,
+    "X-Amz-Security-Token": options.sessionToken,
   }
 }
 
@@ -100,7 +102,8 @@ const formatPolicyForEncoding = (policy) => {
        {"Content-Type": policy.contentType},
        {"x-amz-credential": policy.credential},
        {"x-amz-algorithm": policy.algorithm},
-       {"x-amz-date": policy.date.amzDate}
+       {"x-amz-date": policy.date.amzDate},
+       {"x-amz-security-token": policy.sessionToken},
     ]
   }
 }
