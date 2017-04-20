@@ -1,6 +1,6 @@
 {
   "name": "@veho-tech/react-native-aws3",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Pure JavaScript react native library for uploading to AWS S3",
   "author": {
     "name": "Ben Reinhart"
