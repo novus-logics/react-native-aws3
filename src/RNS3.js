@@ -37,10 +37,9 @@ export class RNS3 {
     });
 
     // data URL?
-
     const dataUrlRegex = /^data:\w+\/\w+;base64,/;
     if (dataUrlRegex.test(file.uri)) {
-      file.uri = file.uri.replace(dataUrlRegex, '');
+      file = file.uri.replace(dataUrlRegex, '');
       options.contentEncoding = 'base64';
     }
 
