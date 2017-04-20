@@ -13,7 +13,8 @@ const EXPECTED_RESPONSE_KEY_VALUE_RE = {
 }
 
 const extractResponseValues = (responseText) => {
-  return null == responseText ? null : Object.keys(EXPECTED_RESPONSE_KEY_VALUE_RE)
+  return null == responseText ? null : Object.keys(
+    EXPECTED_RESPONSE_KEY_VALUE_RE)
     .reduce((result, key) => {
       let match = responseText.match(EXPECTED_RESPONSE_KEY_VALUE_RE[key]);
       return Object.assign(result, { [key]: match && match[1] });
@@ -21,7 +22,10 @@ const extractResponseValues = (responseText) => {
 }
 
 const setBodyAsParsedXML = (response) => {
-  return Object.assign(response, { body: { postResponse: extractResponseValues(response.text) } });
+  return Object.assign(
+    response,
+    { body: { postResponse: extractResponseValues(response.text) } },
+  );
 }
 
 export class RNS3 {
@@ -29,8 +33,16 @@ export class RNS3 {
   static put(file, options) {
     options = Object.assign({}, options, {
       key: (options.keyPrefix || '') + file.name,
-      contentType: file.type
+      contentType: file.type,
     });
+
+    // data URL?
+
+    const dataUrlRegex = /^data:\w+\/\w+:base64,/;
+    if (dataUrlRegex.test(file.uri)) {
+      file.uri = file.uri.replace(dataUrlRegex, '');
+      options.contentEncoding = 'base64';
+    }
 
     let url = `https://${ options.bucket }.${options.awsUrl || 's3.amazonaws.com'}`;
     let method = "POST";
