@@ -2,10 +2,8 @@
  * RNS3
  */
 
-import { Request } from './Request'
-import { S3Policy } from './S3Policy'
-
-const AWS_DEFAULT_S3_HOST = 's3.amazonaws.com'
+import { Request } from './Request';
+import { S3Policy } from './S3Policy';
 
 const EXPECTED_RESPONSE_KEY_VALUE_RE = {
   key: /<Key>(.*)<\/Key>/,
@@ -30,16 +28,10 @@ const setBodyAsParsedXML = (response) => {
   );
 }
 
-const setBodyAsParsedXML = (response) =>
-  ({
-    ...response,
-    body: { postResponse: response.text == null ? null : extractResponseValues(response.text) }
-  })
-
 export class RNS3 {
+
   static put(file, options) {
-    options = {
-      ...options,
+    options = Object.assign({}, options, {
       key: (options.keyPrefix || '') + file.name,
       contentType: file.type,
     });
@@ -58,6 +50,7 @@ export class RNS3 {
     return Request.create(url, method, policy)
       .set("file", file)
       .send()
-      .then(setBodyAsParsedXML)
+      .then(setBodyAsParsedXML);
   }
+
 }

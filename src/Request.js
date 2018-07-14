@@ -2,16 +2,10 @@
  * Request
  */
 
-const isBlank = string =>
-  null == string || !/\S/.test(string)
-
-const notBlank = string =>
-  !isBlank(string)
-
 const parseHeaders = (xhr) => {
-  return (xhr.getAllResponseHeaders() || '')
-    .split(/\r?\n/)
-    .filter(notBlank)
+  return xhr
+    .getAllResponseHeaders()
+    .split("\n")
     .reduce((headers, headerString) => {
       let header = headerString.split(":")[0];
       headers[header] = xhr.getResponseHeader(header);
@@ -51,16 +45,13 @@ export class Request {
   }
 
   constructor(url, method, attrs = {}, headers = {}) {
-    this._xhr = new Request.XMLHttpRequest();
-    this._formData = new Request.FormData();
-
+    this._xhr = new XMLHttpRequest();
     this._xhr.open(method, url);
-
+    this._formData = new FormData();
     this._promise = new Promise((resolve, reject) => {
       this._xhr.onload = buildResponseHandler(this._xhr, resolve, reject);
       this._xhr.onerror = buildResponseHandler(this._xhr, resolve, reject);
     });
-
     Object.keys(attrs).forEach((k) => this.set(k, attrs[k]));
     Object.keys(headers).forEach((k) => this.header(k, headers[k]));
   }
@@ -92,16 +83,13 @@ export class Request {
     return this;
   }
 
-  then(...args) {
-    this._promise = this._promise.then(...args);
+  then(fn, reject) {
+    this._promise = this._promise.then(fn, reject);
     return this;
   }
 
-  catch(...args) {
-    this._promise = this._promise.catch(...args);
+  catch(fn) {
+    this._promise = this._promise.catch(fn);
     return this;
   }
 }
-
-Request.FormData = FormData
-Request.XMLHttpRequest = XMLHttpRequest
