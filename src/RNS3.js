@@ -14,14 +14,21 @@ const EXPECTED_RESPONSE_KEY_VALUE_RE = {
   location: /<Location>(.*)<\/Location>/,
 }
 
-const entries = o =>
-  Object.keys(o).map(k => [k, o[k]])
+const extractResponseValues = (responseText) => {
+  return null == responseText ? null : Object.keys(
+    EXPECTED_RESPONSE_KEY_VALUE_RE)
+    .reduce((result, key) => {
+      let match = responseText.match(EXPECTED_RESPONSE_KEY_VALUE_RE[key]);
+      return Object.assign(result, { [key]: match && match[1] });
+    }, {});
+}
 
-const extractResponseValues = (responseText) =>
-  entries(EXPECTED_RESPONSE_KEY_VALUE_RE).reduce((result, [key, regex]) => {
-    const match = responseText.match(regex)
-    return { ...result, [key]: match && match[1] }
-  }, {})
+const setBodyAsParsedXML = (response) => {
+  return Object.assign(
+    response,
+    { body: { postResponse: extractResponseValues(response.text) } },
+  );
+}
 
 const setBodyAsParsedXML = (response) =>
   ({
@@ -34,13 +41,19 @@ export class RNS3 {
     options = {
       ...options,
       key: (options.keyPrefix || '') + file.name,
-      date: new Date,
-      contentType: file.type
+      contentType: file.type,
+    });
+
+    // data URL?
+    const dataUrlRegex = /^data:\w+\/\w+;base64,/;
+    if (dataUrlRegex.test(file.uri)) {
+      file = file.uri.replace(dataUrlRegex, '');
+      options.contentEncoding = 'base64';
     }
 
-    const url = `https://${options.bucket}.${options.awsUrl || AWS_DEFAULT_S3_HOST}`
-    const method = "POST"
-    const policy = S3Policy.generate(options)
+    let url = `https://${ options.bucket }.${options.awsUrl || 's3.amazonaws.com'}`;
+    let method = "POST";
+    let policy = S3Policy.generate(options);
 
     return Request.create(url, method, policy)
       .set("file", file)
