@@ -1,9 +1,9 @@
 {
-  "name": "react-native-aws3",
-  "version": "0.0.8",
+  "name": "@novus-logics/react-native-aws3",
+  "version": "0.0.1",
   "description": "Pure JavaScript react native library for uploading to AWS S3",
   "author": {
-    "name": "Ben Reinhart"
+    "name": "Ben Reinhart, Veho Tech, Novus Logics"
   },
   "keywords": [
     "react",
@@ -47,10 +47,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/benjreinhart/react-native-aws3"
+    "url": "https://github.com/novus-logics/react-native-aws3"
   },
   "bugs": {
-    "url": "https://github.com/benjreinhart/react-native-aws3/issues"
+    "url": "https://github.com/novus-logics/react-native-aws3/issues"
   },
   "license": "MIT"
 }
